@@ -1,0 +1,15 @@
+{
+  "name": "@lastmilegig/web-corporate",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/web-corporate",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nx/next:serve"
+    }
+  }
+}

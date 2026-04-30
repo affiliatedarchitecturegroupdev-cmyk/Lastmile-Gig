@@ -1,0 +1,27 @@
+{
+  "name": "@lastmilegig/source",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "nx build",
+    "test": "nx test",
+    "lint": "nx lint"
+  },
+  "devDependencies": {
+    "@nx/angular": "latest",
+    "@nx/eslint": "latest",
+    "@nx/jest": "latest",
+    "@nx/js": "latest",
+    "@nx/nest": "latest",
+    "@nx/next": "latest",
+    "@nx/node": "latest",
+    "@nx/react": "latest",
+    "@nx/workspace": "latest",
+    "nx": "latest",
+    "typescript": "^5.0.0"
+  },
+  "packageManager": "npm@10.0.0",
+  "nx": {
+    "includedScripts": []
+  }
+}

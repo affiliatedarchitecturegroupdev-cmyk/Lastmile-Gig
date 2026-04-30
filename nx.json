@@ -1,0 +1,43 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "cache": true
+    },
+    "test": {
+      "cache": true
+    },
+    "lint": {
+      "cache": true
+    }
+  },
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*"],
+    "production": ["!{projectRoot}/**/*.spec.ts", "!{projectRoot}/**/*.test.ts"]
+  },
+  "workspaceLayout": {
+    "appsDir": "apps",
+    "libsDir": "libs"
+  },
+  "generators": {
+    "@nx/react": {
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nx/angular": {
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "playwright"
+    },
+    "@nx/nest": {
+      "unitTestRunner": "jest"
+    },
+    "@nx/node": {
+      "unitTestRunner": "jest"
+    },
+    "@nx/next": {
+      "unitTestRunner": "jest"
+    }
+  },
+  "defaultProject": "web-corporate"
+}
