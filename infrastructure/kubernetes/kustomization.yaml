@@ -1,0 +1,13 @@
+# Kustomization for LASTMILE GIG Kubernetes Resources
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - 00-namespaces.yaml
+
+commonLabels:
+  project: lastmilegig
+  managedBy: kubernetes
+
+namespace: default

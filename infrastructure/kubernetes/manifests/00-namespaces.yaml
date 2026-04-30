@@ -1,0 +1,49 @@
+# Core Namespaces for LASTMILE GIG Platform
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lastmile-system
+  labels:
+    name: lastmile-system
+    environment: production
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lastmile-api
+  labels:
+    name: lastmile-api
+    environment: production
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lastmile-drivers
+  labels:
+    name: lastmile-drivers
+    environment: production
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lastmile-partners
+  labels:
+    name: lastmile-partners
+    environment: production
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lastmile-monitoring
+  labels:
+    name: lastmile-monitoring
+    environment: production
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lastmile-ai
+  labels:
+    name: lastmile-ai
+    environment: production
