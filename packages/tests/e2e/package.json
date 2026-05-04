@@ -1,0 +1,27 @@
+{
+  "name": "@lastmile-gig/e2e",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "cypress": "cypress",
+    "cypress:run": "cypress run",
+    "cypress:open": "cypress open"
+  },
+  "devDependencies": {
+    "cypress": "^13.0.0"
+  },
+  "cypress": {
+    "baseUrl": "http://localhost:3000",
+    "viewportWidth": 1280,
+    "viewportHeight": 720,
+    "video": false,
+    "screenshotOnRunFailure": true,
+    "retries": {
+      "runMode": 2,
+      "openMode": 0
+    },
+    "e2e": {
+      "specPattern": "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}"
+    }
+  }
+}
