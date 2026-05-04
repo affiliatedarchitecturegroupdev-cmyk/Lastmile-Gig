@@ -1,0 +1,105 @@
+name: Nightly Tests
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # 2 AM daily
+  workflow_dispatch:
+
+jobs:
+  nightly-tests:
+    name: Nightly Full Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run full test suite
+        run: npm test
+      
+      - name: Run E2E tests
+        run: npm run test:e2e || true
+      
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: coverage/
+
+  performance:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run K6 tests
+        run: |
+          npm run test:load || true
+      
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-test-results
+          path: results/
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+      
+      - name: Check for vulnerabilities
+        run: |
+          npm audit --json > audit.json || true
+      
+      - name: Upload audit results
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-audit
+          path: audit.json
+
+  db-backup:
+    name: Database Backup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: af-south-1
+      
+      - name: Create backup
+        run: |
+          aws rds create-db-snapshot \
+            --db-instance-identifier lastmile-production-db \
+            --snapshot-identifier lastmile-nightly-$(date +%Y%m%d)
+
+  cleanup-old-snapshots:
+    name: Cleanup Old Snapshots
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: af-south-1
+      
+      - name: Delete snapshots older than 7 days
+        run: |
+          aws rds describe-db-snapshots \
+            --snapshot-type manual \
+            --filters "Name=db-instance-id,Values=lastmile-production-db" \
+            --query 'DBSnapshots[?SnapshotCreateTime<`'"$(date -d '7 days ago' -I)"'`].[DBSnapshotIdentifier]' \
+            --output text | xargs -r aws rds delete-db-snapshot --db-snapshot-identifier
