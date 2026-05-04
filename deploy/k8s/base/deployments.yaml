@@ -1,0 +1,454 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-deployment
+  namespace: lastmile-gig
+  labels:
+    app: gateway
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - name: gateway
+          image: lastmile-gig/gateway:latest
+          ports:
+            - name: http
+              containerPort: 3000
+            - name: grpc
+              containerPort: 50051
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3000"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+  namespace: lastmile-gig
+  labels:
+    app: auth
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - name: auth
+          image: lastmile-gig/auth:latest
+          ports:
+            - name: http
+              containerPort: 3001
+            - name: grpc
+              containerPort: 50051
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3001"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-secrets
+                  key: jwt-secret
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-config
+                  key: database-url
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3001
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3001
+            initialDelaySeconds: 10
+            periodSeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-deployment
+  namespace: lastmile-gig
+  labels:
+    app: orders
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: orders
+  template:
+    metadata:
+      labels:
+        app: orders
+    spec:
+      containers:
+        - name: orders
+          image: lastmile-gig/orders:latest
+          ports:
+            - name: http
+              containerPort: 3002
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3002"
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: orders-config
+                  key: database-url
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+            initialDelaySeconds: 30
+            periodSeconds: 10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drivers-deployment
+  namespace: lastmile-gig
+  labels:
+    app: drivers
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: drivers
+  template:
+    metadata:
+      labels:
+        app: drivers
+    spec:
+      containers:
+        - name: drivers
+          image: lastmile-gig/drivers:latest
+          ports:
+            - name: http
+              containerPort: 3003
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3003"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dispatch-deployment
+  namespace: lastmile-gig
+  labels:
+    app: dispatch
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dispatch
+  template:
+    metadata:
+      labels:
+        app: dispatch
+    spec:
+      containers:
+        - name: dispatch
+          image: lastmile-gig/dispatch:latest
+          ports:
+            - name: http
+              containerPort: 3004
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3004"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-deployment
+  namespace: lastmile-gig
+  labels:
+    app: payments
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: payments
+  template:
+    metadata:
+      labels:
+        app: payments
+    spec:
+      containers:
+        - name: payments
+          image: lastmile-gig/payments:latest
+          ports:
+            - name: http
+              containerPort: 3005
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3005"
+            - name: STRIPE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: payments-secrets
+                  key: stripe-secret-key
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storefronts-deployment
+  namespace: lastmile-gig
+  labels:
+    app: storefronts
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: storefronts
+  template:
+    metadata:
+      labels:
+        app: storefronts
+    spec:
+      containers:
+        - name: storefronts
+          image: lastmile-gig/storefronts:latest
+          ports:
+            - name: http
+              containerPort: 3006
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3006"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analytics-deployment
+  namespace: lastmile-gig
+  labels:
+    app: analytics
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: analytics
+  template:
+    metadata:
+      labels:
+        app: analytics
+    spec:
+      containers:
+        - name: analytics
+          image: lastmile-gig/analytics:latest
+          ports:
+            - name: http
+              containerPort: 3007
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3007"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-deployment
+  namespace: lastmile-gig
+  labels:
+    app: ai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ai
+  template:
+    metadata:
+      labels:
+        app: ai
+    spec:
+      containers:
+        - name: ai
+          image: lastmile-gig/ai:latest
+          ports:
+            - name: http
+              containerPort: 3008
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3008"
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ai-secrets
+                  key: openai-api-key
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "2000m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notifications-deployment
+  namespace: lastmile-gig
+  labels:
+    app: notifications
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: notifications
+  template:
+    metadata:
+      labels:
+        app: notifications
+    spec:
+      containers:
+        - name: notifications
+          image: lastmile-gig/notifications:latest
+          ports:
+            - name: http
+              containerPort: 3009
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3009"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fleet-deployment
+  namespace: lastmile-gig
+  labels:
+    app: fleet
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fleet
+  template:
+    metadata:
+      labels:
+        app: fleet
+    spec:
+      containers:
+        - name: fleet
+          image: lastmile-gig/fleet:latest
+          ports:
+            - name: http
+              containerPort: 3010
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3010"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

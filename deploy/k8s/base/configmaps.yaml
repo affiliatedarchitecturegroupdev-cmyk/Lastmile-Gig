@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-config
+  namespace: lastmile-gig
+data:
+  database-url: "postgresql://lastmile-db.clusters.local:5432/lastmile"
+  jwt-expiry: "3600"
+  session-timeout: "86400"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orders-config
+  namespace: lastmile-gig
+data:
+  database-url: "postgresql://lastmile-db.clusters.local:5432/lastmile"
+  cache-url: "redis://lastmile-cache.clusters.local:6379"
+  kafka-brokers: "kafka://lastmile-kafka.clusters.local:9092"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dispatch-config
+  namespace: lastmile-gig
+data:
+  algorithm: "nearest_neighbor"
+  max-route-duration: "1800"
+  batch-size: "10"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payments-config
+  namespace: lastmile-gig
+data:
+  stripe-api-version: "2023-10-16"
+  payment-timeout: "300"
+  refund-threshold: "200"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: notifications-config
+  namespace: lastmile-gig
+data:
+  email-from: "noreply@lastmile-gig.com"
+  sms-provider: "twilio"
+  push-provider: "firebase"

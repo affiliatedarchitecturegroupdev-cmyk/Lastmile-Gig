@@ -1,0 +1,189 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lastmile-gig
+  labels:
+    name: lastmile-gig
+    environment: production
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-svc
+  namespace: lastmile-gig
+  labels:
+    app: gateway
+spec:
+  type: ClusterIP
+  selector:
+    app: gateway
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+    - name: grpc
+      port: 50051
+      targetPort: 50051
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-svc
+  namespace: lastmile-gig
+  labels:
+    app: auth
+spec:
+  type: ClusterIP
+  selector:
+    app: auth
+  ports:
+    - name: http
+      port: 3001
+      targetPort: 3001
+    - name: grpc
+      port: 50051
+      targetPort: 50051
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-svc
+  namespace: lastmile-gig
+  labels:
+    app: orders
+spec:
+  type: ClusterIP
+  selector:
+    app: orders
+  ports:
+    - name: http
+      port: 3002
+      targetPort: 3002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drivers-svc
+  namespace: lastmile-gig
+  labels:
+    app: drivers
+spec:
+  type: ClusterIP
+  selector:
+    app: drivers
+  ports:
+    - name: http
+      port: 3003
+      targetPort: 3003
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dispatch-svc
+  namespace: lastmile-gig
+  labels:
+    app: dispatch
+spec:
+  type: ClusterIP
+  selector:
+    app: dispatch
+  ports:
+    - name: http
+      port: 3004
+      targetPort: 3004
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payments-svc
+  namespace: lastmile-gig
+  labels:
+    app: payments
+spec:
+  type: ClusterIP
+  selector:
+    app: payments
+  ports:
+    - name: http
+      port: 3005
+      targetPort: 3005
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: storefronts-svc
+  namespace: lastmile-gig
+  labels:
+    app: storefronts
+spec:
+  type: ClusterIP
+  selector:
+    app: storefronts
+  ports:
+    - name: http
+      port: 3006
+      targetPort: 3006
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: analytics-svc
+  namespace: lastmile-gig
+  labels:
+    app: analytics
+spec:
+  type: ClusterIP
+  selector:
+    app: analytics
+  ports:
+    - name: http
+      port: 3007
+      targetPort: 3007
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-svc
+  namespace: lastmile-gig
+  labels:
+    app: ai
+spec:
+  type: ClusterIP
+  selector:
+    app: ai
+  ports:
+    - name: http
+      port: 3008
+      targetPort: 3008
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notifications-svc
+  namespace: lastmile-gig
+  labels:
+    app: notifications
+spec:
+  type: ClusterIP
+  selector:
+    app: notifications
+  ports:
+    - name: http
+      port: 3009
+      targetPort: 3009
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fleet-svc
+  namespace: lastmile-gig
+  labels:
+    app: fleet
+spec:
+  type: ClusterIP
+  selector:
+    app: fleet
+  ports:
+    - name: http
+      port: 3010
+      targetPort: 3010

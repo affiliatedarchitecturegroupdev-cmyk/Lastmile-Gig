@@ -1,0 +1,115 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lastmile-gig-ingress
+  namespace: lastmile-gig
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+    - hosts:
+        - api.lastmile-gig.com
+        - app.lastmile-gig.com
+        - partner.lastmile-gig.com
+      secretName: lastmile-gig-tls
+  rules:
+    - host: api.lastmile-gig.com
+      http:
+        paths:
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-svc
+                port:
+                  number: 3001
+          - path: /orders
+            pathType: Prefix
+            backend:
+              service:
+                name: orders-svc
+                port:
+                  number: 3002
+          - path: /drivers
+            pathType: Prefix
+            backend:
+              service:
+                name: drivers-svc
+                port:
+                  number: 3003
+          - path: /dispatch
+            pathType: Prefix
+            backend:
+              service:
+                name: dispatch-svc
+                port:
+                  number: 3004
+          - path: /payments
+            pathType: Prefix
+            backend:
+              service:
+                name: payments-svc
+                port:
+                  number: 3005
+          - path: /partners
+            pathType: Prefix
+            backend:
+              service:
+                name: storefronts-svc
+                port:
+                  number: 3006
+          - path: /analytics
+            pathType: Prefix
+            backend:
+              service:
+                name: analytics-svc
+                port:
+                  number: 3007
+          - path: /ai
+            pathType: Prefix
+            backend:
+              service:
+                name: ai-svc
+                port:
+                  number: 3008
+          - path: /notifications
+            pathType: Prefix
+            backend:
+              service:
+                name: notifications-svc
+                port:
+                  number: 3009
+          - path: /fleet
+            pathType: Prefix
+            backend:
+              service:
+                name: fleet-svc
+                port:
+                  number: 3010
+    - host: app.lastmile-gig.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway-svc
+                port:
+                  number: 3000
+    - host: partner.lastmile-gig.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway-svc
+                port:
+                  number: 3000
